@@ -1,25 +1,23 @@
 import type { NextPage } from "next";
 import Link from "next/link";
 import styled from "styled-components";
+import { getFeaturedEvents } from "utils/Dummy";
+import EventList from "components/events/EventList";
 
 function HomePage() {
+  const featuredEvents = getFeaturedEvents();
+
   return (
-    <div>
-      <StyleTest>Home page</StyleTest>
-      <ul>
-        <li>
-          <Link href="/portfolio">portfolio</Link>
-        </li>
-        <li>
-          <a href="/clients">clients</a>
-        </li>
-      </ul>
-    </div>
+    <HomeContainer className="flex-center-C">
+      <EventList items={featuredEvents} />
+    </HomeContainer>
   );
 }
 
-const StyleTest = styled.div`
-  color: ${({ theme }) => theme.colors.mainColor};
+const HomeContainer = styled.main`
+  width: 100vw;
+  height: 100vh;
+  background-color: ${({ theme }) => theme.colors.lightblue};
 `;
 
 export default HomePage;

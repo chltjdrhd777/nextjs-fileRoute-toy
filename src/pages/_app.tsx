@@ -8,6 +8,7 @@ import store from "redux/store";
 import { Provider as ReduxProvider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
+import Layout from "components/layout/Layout";
 
 const persistor = persistStore(store);
 
@@ -19,7 +20,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           <GlobalStyles />
 
           <PersistGate loading={null} persistor={persistor}>
-            <Component {...pageProps} />
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
           </PersistGate>
         </ThemeProvider>
       </ReduxProvider>
