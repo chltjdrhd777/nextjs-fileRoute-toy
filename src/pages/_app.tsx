@@ -1,31 +1,26 @@
-import { Provider } from "react-redux";
 import { ThemeProvider } from "styled-components";
 import type { AppProps } from "next/app";
 import { theme } from "globalCSS/theme";
 import GlobalStyles from "globalCSS/global";
-
-import store from "redux/store";
-import { Provider as ReduxProvider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
-import { persistStore } from "redux-persist";
 import Layout from "components/layout/Layout";
-
-const persistor = persistStore(store);
+import Head from "next/head";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
-      <ReduxProvider store={store}>
-        <ThemeProvider theme={theme}>
-          <GlobalStyles />
+      <Head>
+        <title>NextJS Title</title>
+        <meta name="description" content="find this html, crawler!" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
 
-          <PersistGate loading={null} persistor={persistor}>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </PersistGate>
-        </ThemeProvider>
-      </ReduxProvider>
+      <ThemeProvider theme={theme}>
+        <GlobalStyles />
+
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </ThemeProvider>
     </>
   );
 }

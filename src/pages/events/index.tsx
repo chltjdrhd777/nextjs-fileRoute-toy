@@ -1,11 +1,22 @@
 import styled from "styled-components";
 import EventList from "components/events/EventList";
-import { getAllEvents } from "utils/Dummy";
 import EventSearch from "components/events/EventSearch";
 import { useRouter } from "next/router";
+import { GetStaticPropsContext, InferGetStaticPropsType } from "next";
+import { getAllEvents } from "utils/FirebaseRequest";
 
-function AllEventPage() {
-  const events = getAllEvents();
+export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
+  const events = await getAllEvents();
+
+  return {
+    props: {
+      allEvents: events,
+    },
+    revalidate: 60, //30s
+  };
+};
+
+function AllEventPage({ allEvents }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter();
 
   function findEventsHanlder(year: string, month: string) {
@@ -17,7 +28,7 @@ function AllEventPage() {
   return (
     <S.Events className="flex-center-C">
       <EventSearch onSearch={findEventsHanlder} />
-      <EventList items={events} />
+      <EventList items={allEvents} />
     </S.Events>
   );
 }

@@ -1,16 +1,28 @@
-import type { NextPage } from "next";
+import type { GetStaticPropsContext, InferGetStaticPropsType, NextPage } from "next";
 import Link from "next/link";
 import styled from "styled-components";
-import { getFeaturedEvents } from "utils/Dummy";
+import { getFeaturedEvents } from "utils/FirebaseRequest";
 import EventList from "components/events/EventList";
+import Head from "next/head";
+import React from "react";
 
-function HomePage() {
-  const featuredEvents = getFeaturedEvents();
+export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
+  const res = await getFeaturedEvents();
+  return {
+    props: {
+      events: res,
+    },
+    revalidate: 1800, //30 min
+  };
+};
 
+function HomePage({ events }: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
-    <HomeContainer className="flex-center-C">
-      <EventList items={featuredEvents} />
-    </HomeContainer>
+    <>
+      <HomeContainer className="flex-center-C">
+        <EventList items={events} />
+      </HomeContainer>
+    </>
   );
 }
 

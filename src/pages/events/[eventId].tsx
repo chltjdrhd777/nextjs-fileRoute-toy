@@ -1,40 +1,70 @@
 import React from "react";
 import styled, { css } from "styled-components";
-import { useRouter } from "next/router";
-import { getEventById } from "utils/Dummy";
+import { GetStaticPaths, GetStaticPropsContext, InferGetStaticPropsType } from "next/types";
+import { getEventById } from "utils/FirebaseRequest";
+import Head from "next/head";
 
-function EventDetailPage() {
-  const {
-    query: { eventId },
-  } = useRouter();
-  const event = getEventById(eventId);
+export const getStaticProps = async ({ params }: GetStaticPropsContext<{ eventId: string }>) => {
+  const eventId = params.eventId;
+  const event = await getEventById(eventId);
 
-  //% return /////////////////////////////////////////////
-  if (!event) {
+  if (!eventId || !event) {
+    return {
+      redirect: {
+        permanent: true,
+        destination: "/",
+      },
+    };
+  }
+
+  return {
+    props: {
+      selectedEvent: event,
+    },
+    revalidate: 30, //30s
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: true,
+  };
+};
+
+function EventDetailPage({ selectedEvent }: InferGetStaticPropsType<typeof getStaticProps>) {
+  if (!selectedEvent) {
     return <EventDetailM>There is no event!</EventDetailM>;
   }
 
   return (
-    <EventDetailM className="flex-center-R">
-      <S.GradientBar />
+    <>
+      <Head>
+        <title>{selectedEvent.title}</title>
+        <meta name="description" content={selectedEvent.description} />
+      </Head>
 
-      <S.Section>
-        <S.Title>{event.title}</S.Title>
+      <EventDetailM className="flex-center-R">
+        <S.GradientBar />
 
-        <S.Detail>
-          <S.EventImg>
-            <img src={event.image} alt="event-img" />
-          </S.EventImg>
+        <S.Section>
+          <S.Title>{selectedEvent.title}</S.Title>
 
-          <S.EventInfo className="flex-center-C">
-            <div className="date">{event.date}</div>
-            <div className="place">{event.location}</div>
-          </S.EventInfo>
-        </S.Detail>
+          <S.Detail>
+            <S.EventImg>
+              <img src={selectedEvent.image} alt="event-img" />
+            </S.EventImg>
 
-        <S.P>{event.description}</S.P>
-      </S.Section>
-    </EventDetailM>
+            <S.EventInfo className="flex-center-C">
+              <div className="date">{selectedEvent.date}</div>
+              <div className="place">{selectedEvent.location}</div>
+            </S.EventInfo>
+          </S.Detail>
+
+          <S.P>{selectedEvent.description}</S.P>
+        </S.Section>
+      </EventDetailM>
+    </>
   );
 }
 

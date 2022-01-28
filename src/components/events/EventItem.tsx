@@ -2,6 +2,7 @@ import React from "react";
 import styled, { css } from "styled-components";
 import Link from "next/link";
 import { DummyTypes } from "utils/Dummy";
+import Image from "next/image";
 
 function Index({ title, date, image, location, id }: DummyTypes) {
   const formattedDate = new Date(date).toLocaleDateString("ko-KR", {
@@ -15,7 +16,8 @@ function Index({ title, date, image, location, id }: DummyTypes) {
   return (
     <EventItemM>
       <EventImage>
-        <img src={image} alt="event-img" />
+        <Image src={image} alt="event-img" width={250} height={160} />
+        {/* <img src={image} alt="event-img" /> */}
       </EventImage>
 
       <EventContent>
@@ -51,11 +53,13 @@ const EventItem = styled.li`
 `;
 
 const EventImage = styled.div`
-  width: 18rem;
+  height: 100%;
+  background-color: black;
+  & span {
+    min-height: 100%;
+  }
 
   & img {
-    width: 100%;
-    height: 100%;
     object-fit: cover;
   }
 `;
